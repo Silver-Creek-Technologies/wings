@@ -222,20 +222,21 @@ func (h *Handler) TokenValid() error {
 // SendErrorJson sends an error back to the connected websocket instance by checking the permissions
 // of the token. If the user has the "receive-errors" grant we will send back the actual
 // error message, otherwise we just send back a standard error message.
+//
+// The above is the original documentation for the method.
+// We no longer check for the "receive-errors" grant before sending back the error message.
+// There are no error messages (that I have ever seen) that are dangerous to show to the clients, however there are a number of useful ones
+// such as "Server is suspended", "Server is already running", "Server disk space full", etc. that can help users determine (on their own) what may be the issue.
 func (h *Handler) SendErrorJson(msg Message, err error, shouldLog ...bool) error {
-	j := h.GetJwt()
 	isJWTError := IsJwtError(err)
 
 	wsm := Message{
 		Event: ErrorEvent,
-		Args:  []string{"an unexpected error was encountered while handling this request"},
+		Args:  []string{err.Error()},
 	}
 
-	if isJWTError || (j != nil && j.HasPermission(PermissionReceiveErrors)) {
-		if isJWTError {
-			wsm.Event = JwtErrorEvent
-		}
-		wsm.Args = []string{err.Error()}
+	if isJWTError {
+		wsm.Event = JwtErrorEvent
 	}
 
 	m, u := h.GetErrorMessage(wsm.Args[0])

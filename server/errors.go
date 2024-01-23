@@ -10,6 +10,7 @@ var (
 	ErrServerIsInstalling   = errors.New("server is currently installing")
 	ErrServerIsTransferring = errors.New("server is currently being transferred")
 	ErrServerIsRestoring    = errors.New("server is currently being restored")
+	ErrDiskFull             = errors.New("server disk is full")
 )
 
 type crashTooFrequent struct{}

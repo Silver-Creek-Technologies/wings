@@ -191,8 +191,24 @@ func (s *Server) onBeforeStart() error {
 		s.Filesystem().HasSpaceAvailable(true)
 	} else {
 		s.PublishConsoleOutputFromDaemon("Checking server disk space usage, this could take a few seconds...")
-		if err := s.Filesystem().HasSpaceErr(false); err != nil {
-			return err
+		if !s.Filesystem().HasSpaceAvailable(false) {
+
+			// If the disk is full, we are going to look for a /home/container/scp_server/core file.
+			// This file is a crash dump of the memory of the SCP:SL process if it experiences a unity crash.
+			// These crashes are fairly common on modded servers, as most server owners are extremely stu- unwise about
+			// removing problematic plugins after a big game/framework update occurs.
+			// This action will result in err == nil, if the directory path exists, and it was able to delete the file.
+			if err := s.Filesystem().Delete(s.Filesystem().Path() + "/scp_server/core"); err != nil {
+
+				// If err is not nil, we were not able to locate or delete the file, so we return a disk space full message.
+				return ErrDiskFull
+			}
+
+			// If the err is nil, we know that we just deleted a very large file from the server.
+			// For client QOL, we will re-preform the disk space check one more time, to see if deleting the file allows us to start the server.
+			if !s.Filesystem().HasSpaceAvailable(false) {
+				return ErrDiskFull
+			}
 		}
 	}
 
