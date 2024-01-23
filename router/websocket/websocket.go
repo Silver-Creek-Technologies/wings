@@ -224,10 +224,12 @@ func (h *Handler) TokenValid() error {
 // error message, otherwise we just send back a standard error message.
 //
 // The above is the original documentation for the method.
-// We no longer check for the "receive-errors" grant before sending back the error message.
+// We no longer check for the "receive-errors" grant before sending back the error message, unless it is a JWT error.
 // There are no error messages (that I have ever seen) that are dangerous to show to the clients, however there are a number of useful ones
 // such as "Server is suspended", "Server is already running", "Server disk space full", etc. that can help users determine (on their own) what may be the issue.
+// We continue to hide JWT errors since they wouldn't be very useful to the client, even if they are not dangerous to be shown.
 func (h *Handler) SendErrorJson(msg Message, err error, shouldLog ...bool) error {
+	j := h.GetJwt()
 	isJWTError := IsJwtError(err)
 
 	wsm := Message{
@@ -237,6 +239,10 @@ func (h *Handler) SendErrorJson(msg Message, err error, shouldLog ...bool) error
 
 	if isJWTError {
 		wsm.Event = JwtErrorEvent
+
+		if j == nil || !j.HasPermission(PermissionReceiveErrors) {
+			wsm.Args = []string{"an unexpected error was encountered while handling this request"}
+		}
 	}
 
 	m, u := h.GetErrorMessage(wsm.Args[0])
