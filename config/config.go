@@ -271,6 +271,16 @@ type ConsoleThrottles struct {
 	Period uint64 `json:"line_reset_interval" yaml:"line_reset_interval" default:"100"`
 }
 
+type CrispConfiguration struct {
+	ReporterSecret string `default:"Pterodactyl" json:"reporter_secret" yaml:"reporter_secret"`
+
+	ServiceID string `default:"" json:"service_id" yaml:"service_id"`
+
+	NodeID string `default:"" json:"node_id" yaml:"node_id"`
+
+	ReplicaID string `default:"" json:"replica_id" yaml:"replica_id"`
+}
+
 type Configuration struct {
 	// The location from which this configuration instance was instantiated.
 	path string
@@ -322,6 +332,8 @@ type Configuration struct {
 
 	// IgnorePanelConfigUpdates causes confiuration updates that are sent by the panel to be ignored.
 	IgnorePanelConfigUpdates bool `json:"ignore_panel_config_updates" yaml:"ignore_panel_config_updates"`
+
+	Crisp CrispConfiguration `json:"crisp" yaml:"crisp"`
 }
 
 // NewAtPath creates a new struct and set the path where it should be stored.
