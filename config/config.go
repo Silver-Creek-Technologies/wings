@@ -278,11 +278,11 @@ type ConsoleThrottles struct {
 type CrispConfiguration struct {
 	ReporterSecret string `default:"Pterodactyl" json:"reporter_secret" yaml:"reporter_secret"`
 
-	ServiceID string `default:"" json:"service_id" yaml:"service_id"`
+	ServiceID string `default:"placeholder" json:"service_id" yaml:"service_id"`
 
-	NodeID string `default:"" json:"node_id" yaml:"node_id"`
+	NodeID string `default:"placeholder" json:"node_id" yaml:"node_id"`
 
-	ReplicaID string `default:"" json:"replica_id" yaml:"replica_id"`
+	ReplicaID string `default:"placeholder" json:"replica_id" yaml:"replica_id"`
 }
 
 type Configuration struct {
