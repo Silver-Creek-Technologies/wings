@@ -3,7 +3,9 @@ package router
 import (
 	"context"
 	"errors"
+	"golang.org/x/sys/unix"
 	"net/http"
+	"runtime"
 	"strings"
 
 	"github.com/apex/log"
@@ -42,6 +44,44 @@ func getSystemInformation(c *gin.Context) {
 		OS:            i.System.OSType,
 		Version:       i.Version,
 	})
+}
+
+func getSystemResourceInfo(c *gin.Context) {
+	servers := middleware.ExtractManager(c).All()
+	out := make([]server.ResourceResponse, len(servers), len(servers))
+
+	for i, v := range servers {
+		out[i] = v.ToResourceResponse()
+	}
+
+	i, err := system.GetSystemInformation()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+
+	var stat unix.Statfs_t
+	err2 := unix.Statfs("/var/lib/pterodactyl", &stat)
+	if err2 != nil {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	mem := server.ReadMemoryStats()
+	node := server.ResourceResponse{
+		Id:          "node",
+		MemoryLimit: int64(mem.MemTotal),
+		CpuLimit:    int64(i.System.CPUThreads),
+		DiskLimit:   int64(stat.Blocks * uint64(stat.Bsize)),
+		MemoryUsed:  int64(mem.MemTotal-mem.MemAvailable) * 1024,
+		DiskUsed:    int64((stat.Blocks - stat.Bfree) * uint64(stat.Bsize)),
+	}
+
+	out = append(out, node)
+	c.JSON(http.StatusOK, out)
 }
 
 // Returns all the servers that are registered and configured correctly on
