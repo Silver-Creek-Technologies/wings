@@ -78,6 +78,7 @@ func getSystemResourceInfo(c *gin.Context) {
 		DiskLimit:   int64(stat.Blocks * uint64(stat.Bsize)),
 		MemoryUsed:  int64(mem.MemTotal-mem.MemAvailable) * 1024,
 		DiskUsed:    int64((stat.Blocks - stat.Bfree) * uint64(stat.Bsize)),
+		CpuUsed:     0,
 	}
 
 	out = append(out, node)

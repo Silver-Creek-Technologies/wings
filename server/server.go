@@ -366,12 +366,13 @@ func (s *Server) ToAPIResponse() APIResponse {
 }
 
 type ResourceResponse struct {
-	Id          string `json:"id"`
-	MemoryLimit int64  `json:"mem_limit"`
-	DiskLimit   int64  `json:"disk_limit"`
-	CpuLimit    int64  `json:"cpu_limit"`
-	MemoryUsed  int64  `json:"mem_used"`
-	DiskUsed    int64  `json:"disk_used"`
+	Id          string  `json:"id"`
+	MemoryLimit int64   `json:"mem_limit"`
+	DiskLimit   int64   `json:"disk_limit"`
+	CpuLimit    int64   `json:"cpu_limit"`
+	MemoryUsed  int64   `json:"mem_used"`
+	DiskUsed    int64   `json:"disk_used"`
+	CpuUsed     float64 `json:"cpu_used"`
 }
 
 func (s *Server) ToResourceResponse() ResourceResponse {
@@ -382,6 +383,7 @@ func (s *Server) ToResourceResponse() ResourceResponse {
 		CpuLimit:    s.Config().Build.CpuLimit / 100,
 		MemoryUsed:  int64(s.resources.Memory),
 		DiskUsed:    s.resources.Disk,
+		CpuUsed:     s.resources.CpuAbsolute,
 	}
 }
 
