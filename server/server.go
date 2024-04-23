@@ -376,13 +376,17 @@ type ResourceResponse struct {
 }
 
 func (s *Server) ToResourceResponse() ResourceResponse {
+	usage, err := s.fs.DiskUsage(false)
+	if err != nil {
+		return ResourceResponse{}
+	}
 	return ResourceResponse{
 		Id:          s.ID(),
 		MemoryLimit: s.MemoryLimit() * 1024,
 		DiskLimit:   s.DiskSpace(),
 		CpuLimit:    s.Config().Build.CpuLimit / 100,
 		MemoryUsed:  int64(s.resources.Memory),
-		DiskUsed:    s.resources.Disk,
+		DiskUsed:    usage,
 		CpuUsed:     s.resources.CpuAbsolute,
 	}
 }

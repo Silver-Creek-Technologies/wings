@@ -64,7 +64,7 @@ func getSystemResourceInfo(c *gin.Context) {
 	runtime.ReadMemStats(&m)
 
 	var stat unix.Statfs_t
-	err2 := unix.Statfs("/var/lib/pterodactyl", &stat)
+	err2 := unix.Statfs(config.Get().System.RootDirectory, &stat)
 	if err2 != nil {
 		c.JSON(http.StatusInternalServerError, nil)
 		return
