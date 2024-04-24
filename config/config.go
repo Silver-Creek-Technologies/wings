@@ -275,14 +275,14 @@ type ConsoleThrottles struct {
 	Period uint64 `json:"line_reset_interval" yaml:"line_reset_interval" default:"100"`
 }
 
-type CrispConfiguration struct {
-	ReporterSecret string `default:"Pterodactyl" json:"reporter_secret" yaml:"reporter_secret"`
+type Limits struct {
+	Enabled bool `json:"enabled" yaml:"enabled" default:"false"`
 
-	ServiceID string `default:"placeholder" json:"service_id" yaml:"service_id"`
+	CpuLimit int64 `json:"cpu_limit" yaml:"cpu_limit" default:"0"`
 
-	NodeID string `default:"placeholder" json:"node_id" yaml:"node_id"`
+	MemoryLimit int64 `json:"memory_limit" yaml:"memory_limit" default:"0"`
 
-	ReplicaID string `default:"placeholder" json:"replica_id" yaml:"replica_id"`
+	DiskLimit int64 `json:"disk_limit" yaml:"disk_limit" default:"0"`
 }
 
 type Configuration struct {
@@ -337,7 +337,7 @@ type Configuration struct {
 	// IgnorePanelConfigUpdates causes confiuration updates that are sent by the panel to be ignored.
 	IgnorePanelConfigUpdates bool `json:"ignore_panel_config_updates" yaml:"ignore_panel_config_updates"`
 
-	Crisp CrispConfiguration `json:"crisp" yaml:"crisp"`
+	Limits Limits `json:"limits" yaml:"limits"`
 }
 
 // NewAtPath creates a new struct and set the path where it should be stored.

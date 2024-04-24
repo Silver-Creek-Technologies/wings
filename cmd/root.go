@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	Reporter "github.com/crisp-im/go-crisp-status-reporter/crisp_status_reporter"
 	log2 "log"
 	"net/http"
 	_ "net/http/pprof"
@@ -95,12 +94,6 @@ func rootCmdRun(cmd *cobra.Command, _ []string) {
 	printLogo()
 	log.Debug("running in debug mode")
 	log.WithField("config_file", configPath).Info("loading configuration from file")
-
-	builder := Reporter.New(config.Get().Crisp.ReporterSecret)
-
-	reporter := builder.ServiceID(config.Get().Crisp.ServiceID).NodeID(config.Get().Crisp.NodeID).ReplicaID(config.Get().Crisp.ReplicaID).Interval(time.Duration(30 * time.Second)).Build()
-
-	reporter.Run()
 
 	if ok, _ := cmd.Flags().GetBool("ignore-certificate-errors"); ok {
 		log.Warn("running with --ignore-certificate-errors: TLS certificate host chains and name will not be verified")

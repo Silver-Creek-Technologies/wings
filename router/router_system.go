@@ -46,6 +46,12 @@ func getSystemInformation(c *gin.Context) {
 	})
 }
 
+func getResourceLimits(c *gin.Context) {
+	cfg := config.Get()
+
+	c.JSON(http.StatusOK, cfg.Limits)
+}
+
 func getSystemResourceInfo(c *gin.Context) {
 	servers := middleware.ExtractManager(c).All()
 	out := make([]server.ResourceResponse, len(servers), len(servers))
